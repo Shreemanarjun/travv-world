@@ -14,6 +14,7 @@ import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
+
 fun Application.configureRouting() {
     install(StatusPages) {
 
@@ -23,7 +24,7 @@ fun Application.configureRouting() {
                 is RequestValidationException -> call.respond(
                     message = Response.Error(
                         message = "Data validation failed",
-                        exception = cause.localizedMessage,
+                        exception = "RequestValidationException",
                         reasons = cause.reasons,
                     ), status = HttpStatusCode.UnprocessableEntity,
                 )
@@ -64,7 +65,7 @@ fun Application.configureRouting() {
             call.respondRedirect("/swagger")
         }
         get("/api/home") {
-            call.respond("message" to "Hello Home")
+            call.respond(Response.Success(data = "Hello Home"))
 
         }
 

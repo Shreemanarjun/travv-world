@@ -1,50 +1,39 @@
 package dev.arjundev.plugins
 
+import dev.arjundev.data.dao.user.userDao
 import dev.arjundev.data.model.UserLoginRequest
+import dev.arjundev.data.model.UserRegistrationRequest
+import dev.arjundev.data.model.validateUserLoginRequest
+import dev.arjundev.data.model.validateUserRegistrationRequest
 import io.ktor.server.application.*
 import io.ktor.server.plugins.requestvalidation.*
+import dev.nesk.akkurate.ValidationResult.Failure as AkkurateFailure
+import dev.nesk.akkurate.ValidationResult.Success as AkkurateSuccess
 
-fun Application.configureRequestValidation(){
+fun Application.configureRequestValidation() {
     install(RequestValidation) {
         validate<UserLoginRequest> { userrequest ->
-            when {
-                userrequest.email.isBlank() -> ValidationResult.Invalid("Username cannot be null")
-                userrequest.password.isBlank() -> ValidationResult.Invalid("password cannot be null")
-                else -> ValidationResult.Valid
-            }
-        }
-      /*  validate<UserRegistrationRequest> { usersignuprequest ->
-            when {
-                usersignuprequest.userName.isBlank() -> ValidationResult.Invalid("Username cannot be null")
-                usersignuprequest.password.isBlank() -> ValidationResult.Invalid("password cannot be null")
-                else -> when {
-                    userDao.getUser(username = usersignuprequest.userName)!=null -> {
-                        ValidationResult.Invalid("Unable to signup due to username already reserved")
+            when (val result = validateUserLoginRequest(userDao, userrequest)) {
+                is AkkurateSuccess -> ValidationResult.Valid
+                is AkkurateFailure -> {
+                    val reasons = result.violations.map {
+                        "${it.path.joinToString(".")}: ${it.message}"
                     }
-                    else -> {
-                        ValidationResult.Valid
-                    }
+                    ValidationResult.Invalid(reasons)
                 }
             }
-        }*/
-        /*validate<BlogRequest>{
-                blogRequest ->
-            when{
-                blogRequest.title.isBlank()-> ValidationResult.Invalid("Title cannot be null")
-                blogRequest.description.isBlank()-> ValidationResult.Invalid("description cannot be null")
-                else-> ValidationResult.Valid
-
+        }
+        validate<UserRegistrationRequest> { userrequest ->
+            when (val result = validateUserRegistrationRequest(userDao, userrequest)) {
+                is AkkurateSuccess -> ValidationResult.Valid
+                is AkkurateFailure -> {
+                    val reasons = result.violations.map {
+                        "${it.path.joinToString(".")}: ${it.message}"
+                    }
+                    ValidationResult.Invalid(reasons)
+                }
             }
         }
 
-        validate<BlogUpdateRequest>{
-                blogUpdateRequest ->
-            when{
-                blogUpdateRequest.title.isBlank()-> ValidationResult.Invalid("title cannot be null")
-                blogUpdateRequest.blogId<0-> ValidationResult.Invalid("Blog id cannot be less than 0")
-                blogUpdateRequest.description.isBlank()-> ValidationResult.Invalid("description cannot be null")
-                else-> ValidationResult.Valid
-            }
-        }*/
     }
 }

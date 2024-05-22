@@ -4,6 +4,8 @@ package dev.arjundev.plugins
 
 
 import io.github.smiley4.ktorswaggerui.SwaggerUI
+import io.github.smiley4.ktorswaggerui.data.AuthScheme
+import io.github.smiley4.ktorswaggerui.data.AuthType
 import io.github.smiley4.ktorswaggerui.data.SwaggerUiSort
 import io.github.smiley4.ktorswaggerui.data.SwaggerUiSyntaxHighlight
 import io.ktor.server.application.*
@@ -66,6 +68,16 @@ fun Application.configureSwagger() {
             url = "https://${engineenv.config.host}:$envPort"
             description = "Development server"
 
+        }
+        security {
+            defaultUnauthorizedResponse {
+                description = "Username or password is invalid"
+            }
+            defaultSecuritySchemeNames = setOf("authJWT")
+            securityScheme("authJWT") {
+                type = AuthType.HTTP
+                scheme = AuthScheme.BEARER
+            }
         }
 
 

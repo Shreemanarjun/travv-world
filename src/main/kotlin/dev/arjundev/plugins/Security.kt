@@ -2,45 +2,43 @@ package dev.arjundev.plugins
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 import io.ktor.server.response.*
-import io.ktor.server.routing.*
-import io.ktor.server.sessions.*
 
 fun Application.configureSecurity() {
-    data class MySession(val count: Int = 0)
-    install(Sessions) {
-        cookie<MySession>("MY_SESSION") {
-            cookie.extensions["SameSite"] = "lax"
-        }
-    }
-    // Please read the jwt property from the config file if you are using EngineMain
-    val jwtAudience = "jwt-audience"
-    val jwtDomain = "https://jwt-provider-domain/"
-    val jwtRealm = "ktor sample app"
-    val jwtSecret = "secret"
+
+    val jwtAudience = this@configureSecurity.environment.config.property("jwt.audience").getString()
+    val issuer = this@configureSecurity.environment.config.property("jwt.domain").getString()
+    val secret = this@configureSecurity.environment.config.property("jwt.secret").getString()
+    val myRealm = this@configureSecurity.environment.config.property("jwt.realm").getString()
     authentication {
-        jwt {
-            realm = jwtRealm
+        jwt("authJWT") {
+            realm = myRealm
             verifier(
                 JWT
-                    .require(Algorithm.HMAC256(jwtSecret))
+                    .require(Algorithm.HMAC256(secret))
                     .withAudience(jwtAudience)
-                    .withIssuer(jwtDomain)
+                    .withIssuer(issuer)
                     .build()
             )
-            validate { credential ->
-                if (credential.payload.audience.contains(jwtAudience)) JWTPrincipal(credential.payload) else null
+            validate {
+                return@validate if ((it.payload.getClaim("username")
+                        .asString() != "")&& (it.payload.getClaim("userid")
+                        .asString() != "") && (it.payload.getClaim("tokenType").asString() == "accessToken")
+                ) {
+                    JWTPrincipal(it.payload)
+                } else {
+                    null
+                }
+            }
+            challenge { _, _ ->
+                call.respond(HttpStatusCode.Unauthorized, "Token is not valid or has expired")
             }
         }
+
     }
-    routing {
-        get("/session/increment") {
-                val session = call.sessions.get<MySession>() ?: MySession()
-                call.sessions.set(session.copy(count = session.count + 1))
-                call.respondText("Counter is ${session.count}. Refresh to increment.")
-            }
-    }
+
 }

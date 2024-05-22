@@ -3,6 +3,7 @@ package dev.arjundev.data.model
 import dev.arjundev.data.dao.user.IUserDao
 import dev.arjundev.data.model.validation.accessors.email
 import dev.arjundev.data.model.validation.accessors.password
+import dev.arjundev.data.model.validation.accessors.userName
 import dev.nesk.akkurate.Validator
 import dev.nesk.akkurate.annotations.Validate
 import dev.nesk.akkurate.constraints.builders.hasLengthGreaterThanOrEqualTo
@@ -14,12 +15,13 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 @Validate
-data class UserLoginRequest(val email: String, val password: String)
+data class UserRegistrationRequest(val userName: String, val email: String, val password: String)
 
 
 ///Validation for user login request
 
-val validateUserLoginRequest = Validator.suspendable<IUserDao, UserLoginRequest> { dao ->
+val validateUserRegistrationRequest = Validator.suspendable<IUserDao, UserRegistrationRequest> { dao ->
+
 
     email {
         isNotBlank()
@@ -32,13 +34,23 @@ val validateUserLoginRequest = Validator.suspendable<IUserDao, UserLoginRequest>
         }
 
         if (isValidEmail) {
-            constrain { dao.isEmailExist(it) != null } otherwise {
-                "This email is not registered yet"
+            constrain { dao.isEmailExist(it) == null } otherwise {
+                "This email is already registered"
             }
         }
     }
 
-    password{
+    userName {
+      val isNotBlank=  isNotBlank()
+      if (isNotBlank.satisfied)
+          constrain {
+              val isUserExist=  dao.isUserNameExist(it) == null
+              println("Isuser exist $isUserExist")
+              isUserExist
+          } otherwise { "Username already taken" }
+    }
+
+    password {
         isNotBlank()
         hasLengthGreaterThanOrEqualTo(8)
 

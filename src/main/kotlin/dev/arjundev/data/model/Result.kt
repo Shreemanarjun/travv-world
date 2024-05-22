@@ -9,7 +9,7 @@ sealed class Response<out T> {
 
     @Serializable
     data class Error(
-        val exception: String?,
+        val exception: String? = null,
         val message: String? = "Something went wrong",
         val reasons:
         List<String>? = emptyList()

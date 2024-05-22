@@ -7,6 +7,7 @@ plugins {
     kotlin("jvm") version "2.0.0"
     id("io.ktor.plugin") version "2.3.11"
     id("org.jetbrains.kotlin.plugin.serialization") version "2.0.0"
+    id("com.google.devtools.ksp") version "2.0.0-1.0.21"
 }
 
 group = "dev.arjundev"
@@ -33,7 +34,7 @@ dependencies {
 
     //Databases
     implementation("com.h2database:h2:2.1.214")
-    implementation("org.postgresql:postgresql:42.7.1")
+    implementation("org.postgresql:postgresql:42.7.3")
 
     implementation("io.ktor:ktor-server-html-builder-jvm")
     implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:0.10.1")
@@ -54,4 +55,10 @@ dependencies {
 
     testImplementation("io.ktor:ktor-server-tests-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
+    testImplementation("io.ktor:ktor-server-test-host-jvm:2.3.11")
+
+    ///akkurate
+    implementation("dev.nesk.akkurate:akkurate-core:0.7.0")
+    implementation("dev.nesk.akkurate:akkurate-ksp-plugin:0.7.0")
+    ksp("dev.nesk.akkurate:akkurate-ksp-plugin:0.7.0")
 }
