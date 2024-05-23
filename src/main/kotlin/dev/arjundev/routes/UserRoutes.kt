@@ -11,7 +11,6 @@ import dev.arjundev.data.model.UserLoginRequest
 import dev.arjundev.data.model.UserRegistrationRequest
 import dev.arjundev.data.table.Token
 import dev.arjundev.data.table.User
-import io.github.smiley4.ktorswaggerui.data.KTypeDescriptor
 import io.github.smiley4.ktorswaggerui.data.ValueExampleDescriptor
 import io.github.smiley4.ktorswaggerui.dsl.routes.OpenApiRoute
 import io.github.smiley4.ktorswaggerui.dsl.routing.post
@@ -21,7 +20,6 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import java.util.*
-import kotlin.reflect.typeOf
 
 fun Routing.userRoutes() {
     val audience = this@userRoutes.environment?.config?.property("jwt.audience")?.getString()
@@ -120,7 +118,6 @@ fun Routing.userRoutes() {
         }
 
 
-
     }
 }
 
@@ -130,7 +127,7 @@ private fun OpenApiRoute.routeApiV1UserLogin() {
         description = "Performs user login with email and password"
         request {
 
-            body(KTypeDescriptor(typeOf<UserLoginRequest>())) {
+            body<UserLoginRequest> {
                 // specify two example values
                 example(
                     ValueExampleDescriptor(
@@ -187,12 +184,14 @@ private fun OpenApiRoute.routeApiV1UserLogin() {
 
             HttpStatusCode.OK to {
                 description = "The operation was successful"
-                body(KTypeDescriptor(typeOf<Response.Success<String>>())) {
+                body<Response.Success<MyToken>> {
                     example(
                         ValueExampleDescriptor(
-                            name = "Login Successful",
+                            name = "Login Successfully",
+                            description = "You will get access token and refresh token",
+                            summary = "Logged in ",
 
-                            value = Response.Success(data = "User Logged in Successfully")
+                            value = Response.Success(data = MyToken(accessToken = "a", refreshToken = "a"))
                         )
                     )
                 }
@@ -202,7 +201,7 @@ private fun OpenApiRoute.routeApiV1UserLogin() {
             HttpStatusCode.BadRequest to {
                 description = "Something went wrong"
 
-                body(KTypeDescriptor(typeOf<Response.Error>())) {
+                body<Response.Error>() {
                     example(
                         ValueExampleDescriptor(
                             name = "Bad request",
@@ -219,7 +218,7 @@ private fun OpenApiRoute.routeApiV1UserLogin() {
             HttpStatusCode.InternalServerError to {
                 description = "Internal Server Error"
 
-                body(KTypeDescriptor(typeOf<Response.Error>())) {
+                body<Response.Error> {
                     example(
                         ValueExampleDescriptor(
                             name = "Internal Server Error",
@@ -233,7 +232,7 @@ private fun OpenApiRoute.routeApiV1UserLogin() {
             HttpStatusCode.UnprocessableEntity to {
                 description = "UnprocessableEntity"
 
-                body(KTypeDescriptor(typeOf<Response.Error>())) {
+                body<Response.Error> {
                     example(
                         ValueExampleDescriptor(
                             name = "UnprocessableEntityError",
@@ -256,7 +255,7 @@ private fun OpenApiRoute.routeApiV1UserSignup() {
         description = "Performs user registration with unique username,email,and password"
         request {
 
-            body(KTypeDescriptor(typeOf<UserRegistrationRequest>())) {
+            body<UserRegistrationRequest> {
                 // specify two example values
                 example(
                     ValueExampleDescriptor(
@@ -278,7 +277,7 @@ private fun OpenApiRoute.routeApiV1UserSignup() {
 
             HttpStatusCode.Created to {
                 description = "The operation was successful"
-                body(KTypeDescriptor(typeOf<Response.Success<String>>())) {
+                body<Response.Success<String>> {
                     example(
                         ValueExampleDescriptor(
                             name = "SuccessUser successfully created",
@@ -293,7 +292,7 @@ private fun OpenApiRoute.routeApiV1UserSignup() {
             HttpStatusCode.BadRequest to {
                 description = "Something went wrong"
 
-                body(KTypeDescriptor(typeOf<Response.Error>())) {
+                body<Response.Error> {
                     example(
                         ValueExampleDescriptor(
                             name = "Bad request",
@@ -307,7 +306,7 @@ private fun OpenApiRoute.routeApiV1UserSignup() {
             HttpStatusCode.InternalServerError to {
                 description = "Internal Server Error"
 
-                body(KTypeDescriptor(typeOf<Response.Error>())) {
+                body<Response.Error> {
                     example(
                         ValueExampleDescriptor(
                             name = "Internal Server Error",
@@ -321,7 +320,7 @@ private fun OpenApiRoute.routeApiV1UserSignup() {
             HttpStatusCode.UnprocessableEntity to {
                 description = "UnprocessableEntity"
 
-                body(KTypeDescriptor(typeOf<Response.Error>())) {
+                body<Response.Error> {
                     example(
                         ValueExampleDescriptor(
                             name = "UnprocessableEntityError",
