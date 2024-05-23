@@ -19,7 +19,7 @@ fun Application.module() {
         exitCodeSupplier = { 0 }
     }
     ///Handle database connection gracefully
-    var isDBInitialized = DatabaseFactory.init()
+    val isDBInitialized = DatabaseFactory.init()
     when {
         isDBInitialized.isSuccess -> {
             configureRequestValidation()
