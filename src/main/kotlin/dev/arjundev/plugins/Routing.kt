@@ -1,6 +1,7 @@
 package dev.arjundev.plugins
 
 import dev.arjundev.data.model.Response
+import dev.arjundev.routes.profileRoutes
 import dev.arjundev.routes.userRoutes
 import io.github.smiley4.ktorswaggerui.routing.openApiSpec
 import io.github.smiley4.ktorswaggerui.routing.swaggerUI
@@ -56,6 +57,9 @@ fun Application.configureRouting() {
     routing {
         route("swagger") {
             swaggerUI("/api.json")
+            route("/"){
+
+            }
         }
         route("api.json") {
             openApiSpec()
@@ -64,12 +68,10 @@ fun Application.configureRouting() {
         get("/") {
             call.respondRedirect("/swagger")
         }
-        get("/api/home") {
-            call.respond(Response.Success(data = "Hello Home"))
-
-        }
-
         userRoutes()
+        profileRoutes()
+
+
         // Static plugin. Try to access `/static/index.html`
         staticResources("/static", "static") {
 

@@ -4,6 +4,7 @@ import dev.arjundev.data.dao.DatabaseFactory
 import dev.arjundev.data.model.Response
 import dev.arjundev.plugins.*
 import io.ktor.server.application.*
+import io.ktor.server.engine.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
@@ -13,6 +14,10 @@ fun main(args: Array<String>): Unit =
 fun Application.module() {
     configureSerialization()
     configureSecurity()
+    install(ShutDownUrl.ApplicationCallPlugin) {
+        shutDownUrl = "/shutdown"
+        exitCodeSupplier = { 0 }
+    }
     ///Handle database connection gracefully
     var isDBInitialized = DatabaseFactory.init()
     when {
@@ -26,7 +31,9 @@ fun Application.module() {
         }
 
         else -> {
-            /// If any DB exception is there redirect useres to a common path and provide a rety url for retry the connection
+
+
+            /// If any DB exception is there redirect users to a common path and provide a retry url for retry the connection
             routing {
 
                 get("{...}") {

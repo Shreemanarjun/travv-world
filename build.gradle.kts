@@ -62,3 +62,9 @@ dependencies {
     implementation("dev.nesk.akkurate:akkurate-ksp-plugin:0.7.0")
     ksp("dev.nesk.akkurate:akkurate-ksp-plugin:0.7.0")
 }
+ktor {
+    fatJar {
+        archiveFileName.set("travvworld.jar")
+    }
+}
+

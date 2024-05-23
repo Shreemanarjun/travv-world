@@ -2,6 +2,7 @@ package dev.arjundev.plugins
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import dev.arjundev.data.model.Response
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -26,7 +27,7 @@ fun Application.configureSecurity() {
             )
             validate {
                 return@validate if ((it.payload.getClaim("username")
-                        .asString() != "")&& (it.payload.getClaim("userid")
+                        .asString() != "") && (it.payload.getClaim("userid")
                         .asString() != "") && (it.payload.getClaim("tokenType").asString() == "accessToken")
                 ) {
                     JWTPrincipal(it.payload)
@@ -35,7 +36,10 @@ fun Application.configureSecurity() {
                 }
             }
             challenge { _, _ ->
-                call.respond(HttpStatusCode.Unauthorized, "Token is not valid or has expired")
+                call.respond(
+                    HttpStatusCode.Unauthorized,
+                    Response.Error(message = "Token is not valid or has expired")
+                )
             }
         }
 

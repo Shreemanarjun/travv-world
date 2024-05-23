@@ -5,7 +5,7 @@ import dev.arjundev.data.table.User
 
 interface IUserDao {
     suspend fun getAllUser(): List<User>
-    suspend fun isUserAvailable(id: Int): User?
+    suspend fun isUserAvailable(id: String): User?
 
     suspend fun isUserAvailable(user: UserLoginRequest): Boolean
 
@@ -15,5 +15,5 @@ interface IUserDao {
 
     suspend fun isUserNameExist(username: String): User?
     suspend fun addNewUser(email: String, username: String, password: String): User?
-    suspend fun deleteUser(id: Int): Boolean
+    suspend fun deleteUser(id: String): Boolean
 }

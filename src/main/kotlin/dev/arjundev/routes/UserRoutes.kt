@@ -230,14 +230,14 @@ private fun OpenApiRoute.routeApiV1UserLogin() {
             }
 
             HttpStatusCode.UnprocessableEntity to {
-                description = "UnprocessableEntity"
+                description = "Unprocessable Entity"
 
                 body<Response.Error> {
                     example(
                         ValueExampleDescriptor(
-                            name = "UnprocessableEntityError",
+                            name = "Unprocessable Entity Error",
                             value = Response.Error(
-                                message = "UnprocessableEntity Error.Check input data",
+                                message = "Unprocessable  gEntity Error.Check input data",
                                 exception = null
                             )
                         )
@@ -318,12 +318,12 @@ private fun OpenApiRoute.routeApiV1UserSignup() {
             }
 
             HttpStatusCode.UnprocessableEntity to {
-                description = "UnprocessableEntity"
+                description = "Unprocessable Entity"
 
                 body<Response.Error> {
                     example(
                         ValueExampleDescriptor(
-                            name = "UnprocessableEntityError",
+                            name = "Unprocessable Entity Error",
                             value = Response.Error(
                                 message = "UnprocessableEntity Error.Check input data",
                                 exception = null

@@ -49,9 +49,9 @@ class UserDao : IUserDao {
 
     }
 
-    override suspend fun isUserAvailable(id: Int): User? = DatabaseFactory.dbQuery {
+    override suspend fun isUserAvailable(id: String): User? = DatabaseFactory.dbQuery {
         UserTable
-            .select { (UserTable.id eq UUID.fromString(id.toString())) }
+            .select { (UserTable.id eq UUID.fromString(id)) }
             .map { it.toUser() }
             .singleOrNull()
     }
@@ -62,11 +62,11 @@ class UserDao : IUserDao {
             it[UserTable.password] = password
             it[UserTable.username]=username
         }
-        insertStatement.resultedValues?.singleOrNull()?.let { it.toUser() }
+        insertStatement.resultedValues?.singleOrNull()?.toUser()
     }
 
-    override suspend fun deleteUser(id: Int): Boolean = DatabaseFactory.dbQuery {
-        UserTable.deleteWhere { UserTable.id eq UUID.fromString(id.toString()) } > 0
+    override suspend fun deleteUser(id: String): Boolean = DatabaseFactory.dbQuery {
+        UserTable.deleteWhere { UserTable.id eq UUID.fromString(id) } > 0
     }
 }
 
