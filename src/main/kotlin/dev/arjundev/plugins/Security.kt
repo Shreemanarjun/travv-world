@@ -26,13 +26,18 @@ fun Application.configureSecurity() {
                     .build()
             )
             validate {
-                return@validate if ((it.payload.getClaim("username")
+
+                when {
+                    ///Check the all the claims associated with jwt available its invalid
+                    (it.payload.getClaim("username")
                         .asString() != "") && (it.payload.getClaim("userid")
-                        .asString() != "") && (it.payload.getClaim("tokenType").asString() == "accessToken")
-                ) {
-                    JWTPrincipal(it.payload)
-                } else {
-                    null
+                        .asString() != "") && (it.payload.getClaim("tokenType").asString() == "accessToken") -> {
+                        JWTPrincipal(it.payload)
+                    }
+
+                    else -> {
+                        null
+                    }
                 }
             }
             challenge { _, _ ->
@@ -41,6 +46,7 @@ fun Application.configureSecurity() {
                     Response.Error(message = "Token is not valid or has expired")
                 )
             }
+
         }
 
     }

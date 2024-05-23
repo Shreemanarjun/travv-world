@@ -42,6 +42,7 @@ class UserDao : IUserDao {
             .map { it.toUser() }.firstOrNull()
 
     }
+
     override suspend fun isEmailExist(email: String): User? = DatabaseFactory.dbQuery {
         UserTable
             .select { (UserTable.email eq email) }
@@ -56,17 +57,51 @@ class UserDao : IUserDao {
             .singleOrNull()
     }
 
-    override suspend fun addNewUser(email: String,username:String, password: String): User? = DatabaseFactory.dbQuery {
-        val insertStatement = UserTable.insert {
-            it[UserTable.email] = email
-            it[UserTable.password] = password
-            it[UserTable.username]=username
+    override suspend fun addNewUser(email: String, username: String, password: String): User? =
+        DatabaseFactory.dbQuery {
+            val insertStatement = UserTable.insert {
+                it[UserTable.email] = email
+                it[UserTable.password] = password
+                it[UserTable.username] = username
+            }
+            insertStatement.resultedValues?.singleOrNull()?.toUser()
         }
-        insertStatement.resultedValues?.singleOrNull()?.toUser()
-    }
 
     override suspend fun deleteUser(id: String): Boolean = DatabaseFactory.dbQuery {
         UserTable.deleteWhere { UserTable.id eq UUID.fromString(id) } > 0
+    }
+
+    override suspend fun updateUsernameAndEmail(id: String, email: String, username: String): Boolean = DatabaseFactory.dbQuery {
+        UserTable.update({ UserTable.id eq UUID.fromString(id) }) {
+            it[UserTable.username] = username
+            it[UserTable.email] = email
+        } > 0
+    }
+
+    override suspend fun updateUsername(id: String, username: String): Boolean =DatabaseFactory.dbQuery {
+        UserTable.update({ UserTable.id eq UUID.fromString(id) }) {
+            it[UserTable.username] = username
+
+        } > 0
+    }
+
+    override suspend fun updateEmail(id: String, email: String): Boolean =DatabaseFactory.dbQuery {
+        UserTable.update({ UserTable.id eq UUID.fromString(id) }) {
+
+            it[UserTable.email] = email
+        } > 0
+    }
+
+    override suspend fun isUsernameAvailable(id: String, username: String): Boolean = DatabaseFactory.dbQuery {
+        UserTable.select { (UserTable.username eq username) and (UserTable.id neq UUID.fromString(id)) }
+            .map { it.toUser() }
+            .isEmpty()
+    }
+
+    override suspend fun isEmailAvailable(id: String, email: String): Boolean = DatabaseFactory.dbQuery {
+        UserTable.select { (UserTable.email eq email) and (UserTable.id neq UUID.fromString(id)) }
+            .map { it.toUser() }
+            .isEmpty()
     }
 }
 

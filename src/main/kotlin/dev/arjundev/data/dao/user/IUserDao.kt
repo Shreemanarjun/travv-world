@@ -16,4 +16,11 @@ interface IUserDao {
     suspend fun isUserNameExist(username: String): User?
     suspend fun addNewUser(email: String, username: String, password: String): User?
     suspend fun deleteUser(id: String): Boolean
+
+    suspend fun updateUsernameAndEmail(id:String, email: String, username: String):Boolean
+
+    suspend fun updateUsername(id:String, username: String):Boolean
+    suspend fun updateEmail(id:String,email: String):Boolean
+    suspend fun isUsernameAvailable(id:String, username: String):Boolean
+    suspend fun isEmailAvailable(id:String,email: String):Boolean
 }

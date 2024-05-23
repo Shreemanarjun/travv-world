@@ -10,16 +10,24 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 object DatabaseFactory {
     fun init(): Result<Boolean> {
-        /*  val database = Database.connect(
-              url = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1",
-              user = "root",
-              driver = "org.h2.Driver",
-              password = ""
-          )*/
+
         try {
-            val driverClassName = "org.postgresql.Driver"
-            val jdbcURL = "jdbc:postgresql://localhost:5432/TravvWorld"
-            val database = Database.connect(jdbcURL, driverClassName, user = "shreemanarjunsahu")
+            val database = Database.connect(
+                url = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1",
+                user = "root",
+                driver = "org.h2.Driver",
+                password = ""
+            )
+//            val driverClassName = "org.postgresql.Driver"
+//            val jdbcURL = "jdbc:postgresql://localhost:5432/TravvWorld"
+//            val database = Database.connect(jdbcURL, driverClassName, user = "shreemanarjunsahu")
+//
+//            val database = Database.connect(
+//                url = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1",
+//                user = "root",
+//                driver = "org.h2.Driver",
+//                password = ""
+//            )
             transaction(database) {
                 SchemaUtils.createMissingTablesAndColumns(UserTable)
                 SchemaUtils.createMissingTablesAndColumns(TokenTable)

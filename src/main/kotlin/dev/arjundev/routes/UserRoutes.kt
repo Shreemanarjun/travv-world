@@ -34,6 +34,7 @@ fun Routing.userRoutes() {
             .withIssuer(issuer)
             .withClaim("userid", user.id)
             .withClaim("username", user.username)
+
             .withClaim("tokenType", "accessToken")
             .withExpiresAt(Date(System.currentTimeMillis() + accessTokenExpiryTime))
             .sign(Algorithm.HMAC256(secret))
@@ -42,6 +43,7 @@ fun Routing.userRoutes() {
             .withIssuer(issuer)
             .withClaim("userid", user.id)
             .withClaim("username", user.username)
+
             .withClaim("tokenType", "refreshToken")
             .withExpiresAt(Date(System.currentTimeMillis() + refreshTokenExpiryTime))
             .sign(Algorithm.HMAC256(secret))

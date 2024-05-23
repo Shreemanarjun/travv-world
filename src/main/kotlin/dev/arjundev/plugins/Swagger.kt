@@ -70,9 +70,7 @@ fun Application.configureSwagger() {
 
         }
         security {
-            defaultUnauthorizedResponse {
-                description = "Username or password is invalid"
-            }
+
             defaultSecuritySchemeNames = setOf("authJWT")
             securityScheme("authJWT") {
                 type = AuthType.HTTP
@@ -98,7 +96,7 @@ fun Application.configureSwagger() {
                   example("Unauthorized Access", ErrorResponse(error = "Unauthorized Access"))
               }
           }*/
-        val json = Json {
+        Json {
             prettyPrint = true
             encodeDefaults = true
 

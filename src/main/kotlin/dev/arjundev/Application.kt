@@ -11,6 +11,10 @@ import io.ktor.server.routing.*
 fun main(args: Array<String>): Unit =
     io.ktor.server.netty.EngineMain.main(args)
 
+
+
+
+@Suppress("unused")
 fun Application.module() {
     configureSerialization()
     configureSecurity()
@@ -25,7 +29,6 @@ fun Application.module() {
             configureRequestValidation()
             configureTemplating()
             configureHTTP()
-
             configureSwagger()
             configureRouting()
         }
