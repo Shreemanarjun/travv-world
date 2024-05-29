@@ -4,12 +4,12 @@ import dev.arjundev.data.dao.DatabaseFactory
 import dev.arjundev.data.model.UserLoginRequest
 import dev.arjundev.data.table.User
 import dev.arjundev.data.table.UserTable
-import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import java.util.*
 
 class UserDao : IUserDao {
+
     private fun ResultRow.toUser() = User(
         id = this[UserTable.id].value.toString(),
         username = this[UserTable.username],
@@ -105,11 +105,3 @@ class UserDao : IUserDao {
     }
 }
 
-val userDao: IUserDao = UserDao().apply {
-    runBlocking {
-//        if(getAllUser().isEmpty()) {
-//            addNewUser(email = "Arjun@mail.in", password = "password")
-//
-//        }
-    }
-}

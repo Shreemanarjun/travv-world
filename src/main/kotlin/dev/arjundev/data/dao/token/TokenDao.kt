@@ -78,5 +78,3 @@ class TokenDaoFacadeImpl : TokenDaoFacade {
         }
     }
 }
-
-val tokenDao: TokenDaoFacade = TokenDaoFacadeImpl()

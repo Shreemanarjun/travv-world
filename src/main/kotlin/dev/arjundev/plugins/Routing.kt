@@ -7,7 +7,6 @@ import io.github.smiley4.ktorswaggerui.routing.openApiSpec
 import io.github.smiley4.ktorswaggerui.routing.swaggerUI
 import io.ktor.http.*
 import io.ktor.server.application.*
-import io.ktor.server.http.content.*
 import io.ktor.server.plugins.*
 import io.ktor.server.plugins.autohead.*
 import io.ktor.server.plugins.requestvalidation.*
@@ -72,9 +71,9 @@ fun Application.configureRouting() {
         profileRoutes()
 
 
-        // Static plugin. Try to access `/static/index.html`
+     /*   // Static plugin. Try to access `/static/index.html`
         staticResources("/static", "static") {
 
-        }
+        }*/
     }
 }
