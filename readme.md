@@ -4,14 +4,20 @@ Welcome to the Travv-World Project! This project is built using Kotlin and Ktor 
 
 ## Table of Contents
 
-- [Setup](#setup)
-- [Endpoints](#endpoints)
-- [Data Storage](#data-storage)
-- [Testing](#testing)
-- [Documentation](#documentation)
-- [Project Structure](#project-structure)
-- [Contributing](#contributing)
-- [License](#license)
+- [Travv-World Project](#travv-world-project)
+  - [Table of Contents](#table-of-contents)
+  - [Setup](#setup)
+    - [Prerequisites](#prerequisites)
+    - [Installation](#installation)
+  - [Endpoints](#endpoints)
+    - [User Registration and Login](#user-registration-and-login)
+    - [Profile Management](#profile-management)
+  - [Data Storage](#data-storage)
+  - [Testing](#testing)
+  - [Documentation](#documentation)
+  - [Project Structure](#project-structure)
+  - [Contributing](#contributing)
+  - [License](#license)
 
 ## Setup
 
@@ -25,7 +31,7 @@ Welcome to the Travv-World Project! This project is built using Kotlin and Ktor 
 
 1. Clone the repository:
     ```sh
-    git clone https://github.com/yourusername/travv-world.git
+    git clone https://github.com/Shreemanarjun/travv-world.git
     cd travv-world
     ```
 
@@ -43,26 +49,95 @@ Welcome to the Travv-World Project! This project is built using Kotlin and Ktor 
 
 The server will start on `http://localhost:8080`.
 
+# User Management API
+
+This API provides endpoints for user management, including user registration, login, profile retrieval, and profile updates.
+
 ## Endpoints
 
 ### User Registration and Login
 
-- **Register**: `POST /register`
-    - Request Body: `{ "username": "string", "email": "string", "password": "string" }`
-    - Response: `201 Created`
+- **Register**: `POST /api/v1/user/signup`
+  - **Request Body:**
+    ```json
+    {
+      "username": "string",
+      "email": "string",
+      "password": "string"
+    }
+    ```
+  - **Response:**
+    - `201 Created`
+      ```json
+      {
+        "data": "User successfully created"
+      }
+      ```
 
-- **Login**: `POST /login`
-    - Request Body: `{ "email": "string", "password": "string" }`
-    - Response: `200 OK` with a JWT token
+- **Login**: `POST /api/v1/user/login`
+  - **Request Body:**
+    ```json
+    {
+      "email": "string",
+      "password": "string"
+    }
+    ```
+  - **Response:**
+    - `200 OK` with a JWT token
+      ```json
+      {
+        "data": {
+          "accessToken": "string",
+          "refreshToken": "string"
+        }
+      }
+      ```
 
 ### Profile Management
 
-- **Get Profile**: `GET /profile/{id}`
-    - Response: `200 OK` with user profile data
+- **Get Profile**: `GET /api/v1/user/profile`
+  - **Response:**
+    - `200 OK` with user profile data
+      ```json
+      {
+        "data": {
+          "userID": "string",
+          "username": "string",
+          "email": "string"
+        }
+      }
+      ```
 
-- **Update Profile**: `PUT /profile/{id}`
-    - Request Body: `{ "username": "string", "email": "string" }`
-    - Response: `200 OK`
+- **Update Profile**: `PUT /api/v1/user/profile`
+  - **Request Body:**
+    ```json
+    {
+      "username": "string",
+      "email": "string"
+    }
+    ```
+  - **Response:**
+    - `200 OK`
+      ```json
+      {
+        "data": {
+          "profile": {
+            "userID": "string",
+            "username": "string",
+            "email": "string"
+          },
+          "updateMessage": "Profile updated successfully"
+        }
+      }
+      ```
+
+## Security
+
+This API uses JWT for authentication. To access secured endpoints like `/api/v1/user/profile`, include the JWT in the `Authorization` header as a Bearer token.
+
+Example:
+```json Authorization: Bearer <your_jwt_token> ```
+
 
 ## Data Storage
 
@@ -91,12 +166,23 @@ travv-world/
  ┃ ┃ ┃ ┗ 📂arjundev
  ┃ ┃ ┃ ┃ ┣ 📂data
  ┃ ┃ ┃ ┃ ┃ ┣ 📂dao
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂token
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜TokenDao.kt
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜TokenDaoFacade.kt
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂user
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜IUserDao.kt
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜UserDao.kt
  ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜DatabaseFactory.kt
  ┃ ┃ ┃ ┃ ┃ ┣ 📂model
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜MyToken.kt
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜Profile.kt
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜ProfileUpdateRequest.kt
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜ProfileUpdateResponse.kt
  ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜Result.kt
  ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜UserLoginRequest.kt
- ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜UserRegistrationReuqest.kt
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜UserRegistrationRequest.kt
  ┃ ┃ ┃ ┃ ┃ ┗ 📂table
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜TokenTable.kt
  ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜UserTable.kt
  ┃ ┃ ┃ ┃ ┣ 📂plugins
  ┃ ┃ ┃ ┃ ┃ ┣ 📜HTTP.kt
@@ -108,15 +194,20 @@ travv-world/
  ┃ ┃ ┃ ┃ ┃ ┣ 📜Templating.kt
  ┃ ┃ ┃ ┃ ┃ ┗ 📜UsersSchema.kt
  ┃ ┃ ┃ ┃ ┣ 📂routes
+ ┃ ┃ ┃ ┃ ┃ ┣ 📜ProfileRoutes.kt
  ┃ ┃ ┃ ┃ ┃ ┗ 📜UserRoutes.kt
  ┃ ┃ ┃ ┃ ┗ 📜Application.kt
  ┃ ┗ 📂resources
+ ┃ ┃ ┣ 📜application.conf
  ┃ ┃ ┗ 📜logback.xml
  ┗ 📂test
  ┃ ┗ 📂kotlin
  ┃ ┃ ┗ 📂dev
  ┃ ┃ ┃ ┗ 📂arjundev
- ┃ ┃ ┃ ┃ ┗ 📜ApplicationTest.kt
+ ┃ ┃ ┃ ┃ ┣ 📂plugins
+ ┃ ┃ ┃ ┃ ┃ ┗ 📜RoutingKtTest.kt
+ ┃ ┃ ┃ ┃ ┣ 📜ApplicationTest.kt
+ ┃ ┃ ┃ ┃ ┗ 📜checkModuleTest.kt
 ```
 
 ## Contributing
