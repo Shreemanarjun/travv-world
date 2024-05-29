@@ -1,6 +1,6 @@
 package dev.arjundev.routes
 
-import dev.arjundev.data.dao.user.userDao
+import dev.arjundev.data.dao.user.IUserDao
 import dev.arjundev.data.model.*
 import io.github.smiley4.ktorswaggerui.data.ValueExampleDescriptor
 import io.github.smiley4.ktorswaggerui.dsl.routes.OpenApiRoute
@@ -13,10 +13,12 @@ import io.ktor.server.auth.jwt.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import org.koin.ktor.ext.inject
 
 
 fun Routing.profileRoutes() {
     authenticate("authJWT") {
+      val userDao by inject<IUserDao>()
         route("api/v1/user/profile") {
             get("", {
                 routeApiV1UserProfile()

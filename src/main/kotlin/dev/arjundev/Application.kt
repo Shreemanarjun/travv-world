@@ -1,21 +1,36 @@
 package dev.arjundev
 
+import com.example.data.dao.token.TokenDaoFacade
 import dev.arjundev.data.dao.DatabaseFactory
+import dev.arjundev.data.dao.token.TokenDaoFacadeImpl
+import dev.arjundev.data.dao.user.IUserDao
+import dev.arjundev.data.dao.user.UserDao
 import dev.arjundev.data.model.Response
 import dev.arjundev.plugins.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import org.koin.dsl.module
+import org.koin.ktor.plugin.Koin
+import org.koin.logger.slf4jLogger
 
 fun main(args: Array<String>): Unit =
     io.ktor.server.netty.EngineMain.main(args)
 
 
-
+val appModule = module {
+    single<IUserDao> { UserDao() }
+    single<TokenDaoFacade> {TokenDaoFacadeImpl()  }
+}
 
 @Suppress("unused")
 fun Application.module() {
+    install(Koin) {
+        slf4jLogger()
+        modules(appModule)
+    }
+
     configureSerialization()
     configureSecurity()
     install(ShutDownUrl.ApplicationCallPlugin) {
@@ -27,7 +42,7 @@ fun Application.module() {
     when {
         isDBInitialized.isSuccess -> {
             configureRequestValidation()
-            configureTemplating()
+            //configureTemplating()
             configureHTTP()
             configureSwagger()
             configureRouting()

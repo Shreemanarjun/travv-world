@@ -1,8 +1,7 @@
-
 val ktor_version: String by project
 val kotlin_version: String by project
 val logback_version: String by project
-val swagger_ui_version:String by project
+val swagger_ui_version: String by project
 plugins {
     kotlin("jvm") version "2.0.0"
     id("io.ktor.plugin") version "2.3.11"
@@ -51,7 +50,7 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:$logback_version")
 
     //Swagger
-    implementation ("io.github.smiley4:ktor-swagger-ui:$swagger_ui_version")
+    implementation("io.github.smiley4:ktor-swagger-ui:$swagger_ui_version")
 
     testImplementation("io.ktor:ktor-server-tests-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
@@ -61,6 +60,19 @@ dependencies {
     implementation("dev.nesk.akkurate:akkurate-core:0.7.0")
     implementation("dev.nesk.akkurate:akkurate-ksp-plugin:0.7.0")
     ksp("dev.nesk.akkurate:akkurate-ksp-plugin:0.7.0")
+
+    //koin
+    val koin_version = "3.5.6"
+    implementation("io.insert-koin:koin-ktor:$koin_version")
+    implementation("io.insert-koin:koin-logger-slf4j:$koin_version")
+    testImplementation("io.insert-koin:koin-test:$koin_version")
+    testImplementation("io.insert-koin:koin-test-junit4:$koin_version")
+//MOcKK
+    val mockkVersion = "1.13.11"
+    testImplementation("io.mockk:mockk:${mockkVersion}")
+
+    //KTOr client
+    implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
 }
 ktor {
     fatJar {
