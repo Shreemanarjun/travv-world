@@ -2,6 +2,18 @@
 
 Welcome to the Travv-World Project! This project is built using Kotlin and Ktor with H2 Database for storage. The goal of this project is to create a backend service that supports user registration, login, and profile management.
 
+[![Kotlin](https://img.shields.io/badge/Kotlin-2.0.0-blue.svg?style=for-the-badge&logo=Ktor&logoColor=violet)](https://kotlinlang.org)
+[![Ktor](https://img.shields.io/badge/Ktor-2.3.11-white.svg?style=for-the-badge&logo=Ktor&logoColor=violet)](https://kotlinlang.org)
+
+![GitHub](https://img.shields.io/github/license/Shreemanarjun/travv-world)
+![GitHub Repo stars](https://img.shields.io/github/stars/Shreemanarjun/travv-world)
+![GitHub all releases](https://img.shields.io/github/downloads/Shreemanarjun/travv-world/total)
+![GitHub repo size](https://img.shields.io/github/repo-size/Shreemanarjun/travv-world)
+![GitHub issues](https://img.shields.io/github/issues/Shreemanarjun/travv-world)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/Shreemanarjun/travv-world)
+
+
+
 ## Table of Contents
 
 - [Travv-World Project](#travv-world-project)
