@@ -1,4 +1,5 @@
 import com.example.data.dao.token.TokenDaoFacade
+import dev.arjundev.data.dao.DatabaseFactory
 import dev.arjundev.data.dao.token.TokenDaoFacadeImpl
 import dev.arjundev.data.dao.user.IUserDao
 import dev.arjundev.data.dao.user.UserDao
@@ -26,27 +27,32 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 
+val testModule = module {
 
+    single<IUserDao> { mockk<UserDao>(relaxed = true) }
+    single<TokenDaoFacade> { mockk<TokenDaoFacadeImpl>(relaxed = true) }
+}
 
 
 // Assuming User, UserLoginRequest, IUserDao, and TokenDaoFacade classes/interfaces are defined elsewhere
 
 class ApplicationTest : KoinTest {
-    val testModule = module {
-        single<IUserDao> { mockk<UserDao>(relaxed = true) }
-        single<TokenDaoFacade> { mockk<TokenDaoFacadeImpl>(relaxed = true) }
-    }
+
 
     @BeforeTest
     fun setUp() {
         startKoin {
             modules(testModule)
+
         }
+
     }
 
     @AfterTest
     fun tearDown() {
         stopKoin()
+
+
     }
 
     @Test
@@ -80,6 +86,7 @@ class ApplicationTest : KoinTest {
             )
         }
     }
+
 
     @Test
     fun testInvalidPasswordSignupRequest() = testApplication {
@@ -146,7 +153,7 @@ class ApplicationTest : KoinTest {
                     )
                 ),
                 bodyAsText(),
-                message = "Username should be required"
+                message = "Password must not be blank and should have length grater equal to 8"
             )
         }
     }
@@ -188,6 +195,7 @@ class ApplicationTest : KoinTest {
 
     @Test
     fun testInvalidPasswordSigninrequest() = testApplication {
+        DatabaseFactory.init(createTablesIfExist = false)
         val client = createClient {
             install(io.ktor.client.plugins.contentnegotiation.ContentNegotiation) {
                 json(Json { ignoreUnknownKeys = true })
@@ -210,12 +218,52 @@ class ApplicationTest : KoinTest {
                         message = "Data validation failed",
                         exception = "RequestValidationException",
                         reasons = listOf(
-                            "email: This email is not registered yet","password: Must not be blank","password: Length must be greater than or equal to 8"
+                            "email: This email is not registered yet",
+                            "password: Must not be blank",
+                            "password: Length must be greater than or equal to 8"
                         )
                     )
                 ),
                 bodyAsText(),
                 message = "LoginRequest should be valid"
+            )
+        }
+    }
+
+    @Test
+    fun testInvalidSigninrequest() = testApplication {
+        val client = createClient {
+            install(io.ktor.client.plugins.contentnegotiation.ContentNegotiation) {
+                json(Json { ignoreUnknownKeys = true })
+            }
+        }
+        val signupResponse = client.post("api/v1/user/signup") {
+            contentType(ContentType.Application.Json)
+            setBody(UserRegistrationRequest(userName = "example", email = "test@mail.com", password = "password"))
+        }.apply {
+            assertEquals(HttpStatusCode.Created, status, message = "User signed up status is oK")
+            assertEquals(
+                Json.encodeToString(Response.Success(data = "User successfully created")),
+                bodyAsText(),
+                message = "User sign up successfull body received"
+            )
+        }
+
+        client.post("api/v1/user/login") {
+            contentType(ContentType.Application.Json)
+            setBody(UserLoginRequest(email = "test@mail.com", password = "abcd12345"))
+        }.apply {
+            assertEquals(
+                HttpStatusCode.BadRequest,
+                status,
+                message = "User signed in status is BadRequest"
+            )
+            assertEquals(
+                """
+                    {"exception":null,"message":"Invalid username or password","reasons":[]}
+                """.trimIndent(),
+                bodyAsText(),
+                message = "Wrong email or password"
             )
         }
     }
@@ -258,7 +306,7 @@ class ApplicationTest : KoinTest {
         }
 
 
-        client.post("api/v1/user/signup") {
+        val signupResponse = client.post("api/v1/user/signup") {
             contentType(ContentType.Application.Json)
             setBody(UserRegistrationRequest(userName = "example", email = "test@mail.com", password = "password"))
         }.apply {
@@ -270,7 +318,7 @@ class ApplicationTest : KoinTest {
             )
         }
 
-        client.post("api/v1/user/login") {
+        val loginResponse = client.post("api/v1/user/login") {
             contentType(ContentType.Application.Json)
             setBody(UserLoginRequest(email = "test@mail.com", password = "password"))
         }.apply {

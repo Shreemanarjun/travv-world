@@ -9,7 +9,9 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 import org.jetbrains.exposed.sql.transactions.transaction
 
 object DatabaseFactory {
-    fun init(): Result<Boolean> {
+    fun init(
+        createTablesIfExist: Boolean = true
+    ): Result<Database> {
 
         try {
             val database = Database.connect(
@@ -17,25 +19,36 @@ object DatabaseFactory {
                 user = "root",
                 driver = "org.h2.Driver",
                 password = ""
+
             )
-//            val driverClassName = "org.postgresql.Driver"
-//            val jdbcURL = "jdbc:postgresql://localhost:5432/TravvWorld"
-//            val database = Database.connect(jdbcURL, driverClassName, user = "shreemanarjunsahu")
-//
-//            val database = Database.connect(
-//                url = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1",
-//                user = "root",
-//                driver = "org.h2.Driver",
-//                password = ""
-//            )
-            transaction(database) {
-                SchemaUtils.createMissingTablesAndColumns(UserTable)
-                SchemaUtils.createMissingTablesAndColumns(TokenTable)
-                //  SchemaUtils.create(BlogTable)
+            if (createTablesIfExist) {
+                createTables()
+            } else {
+                dropAllTables()
+
             }
-            return Result.success(true)
+
+
+            return Result.success(database)
         } catch (e: Exception) {
             return Result.failure(e)
+
+        }
+    }
+
+    fun createTables(): Unit {
+        transaction {
+            SchemaUtils.createMissingTablesAndColumns(UserTable)
+            SchemaUtils.createMissingTablesAndColumns(TokenTable)
+
+        }
+    }
+
+    fun dropAllTables(): Unit {
+
+        transaction {
+            SchemaUtils.drop(TokenTable)
+            SchemaUtils.drop(UserTable)
 
         }
     }

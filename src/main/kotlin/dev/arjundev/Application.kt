@@ -19,13 +19,13 @@ fun main(args: Array<String>): Unit =
     io.ktor.server.netty.EngineMain.main(args)
 
 
-val appModule = module {
-    single<IUserDao> { UserDao() }
-    single<TokenDaoFacade> {TokenDaoFacadeImpl()  }
-}
-
 @Suppress("unused")
 fun Application.module() {
+    val appModule = module {
+        single<DatabaseFactory> { DatabaseFactory }
+        single<IUserDao> { UserDao() }
+        single<TokenDaoFacade> { TokenDaoFacadeImpl() }
+    }
     install(Koin) {
         slf4jLogger()
         modules(appModule)
@@ -37,10 +37,12 @@ fun Application.module() {
         shutDownUrl = "/shutdown"
         exitCodeSupplier = { 0 }
     }
+
     ///Handle database connection gracefully
-    val isDBInitialized = DatabaseFactory.init()
+    val isDBInitialized = DatabaseFactory.init(createTablesIfExist = true)
     when {
         isDBInitialized.isSuccess -> {
+
             configureRequestValidation()
             //configureTemplating()
             configureHTTP()
