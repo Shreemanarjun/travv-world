@@ -136,7 +136,10 @@ This API provides endpoints for user management, including user registration, lo
 This API uses JWT for authentication. To access secured endpoints like `/api/v1/user/profile`, include the JWT in the `Authorization` header as a Bearer token.
 
 Example:
-```json Authorization: Bearer <your_jwt_token> ```
+``` 
+Authorization: Bearer <your_jwt_token>
+
+ ```
 
 
 ## Data Storage
