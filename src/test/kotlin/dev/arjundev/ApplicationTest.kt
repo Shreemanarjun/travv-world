@@ -27,17 +27,15 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 
-val testModule = module {
-
-    single<IUserDao> { mockk<UserDao>(relaxed = true) }
-    single<TokenDaoFacade> { mockk<TokenDaoFacadeImpl>(relaxed = true) }
-}
-
-
 // Assuming User, UserLoginRequest, IUserDao, and TokenDaoFacade classes/interfaces are defined elsewhere
 
 class ApplicationTest : KoinTest {
 
+    val testModule = module {
+
+        single<IUserDao> { mockk<UserDao>(relaxed = true) }
+        single<TokenDaoFacade> { mockk<TokenDaoFacadeImpl>(relaxed = true) }
+    }
 
     @BeforeTest
     fun setUp() {
